@@ -1,0 +1,28 @@
+name: Upload Asset to Repo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download release asset
+        run: |
+          gh release download v2.2 -p "Setup-HVAC-TOOL-2.2.exe" -R siscomdiuehoa/hvac-tool
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and push file
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add Setup-HVAC-TOOL-2.2.exe
+          git commit -m "Add Setup-HVAC-TOOL-2.2.exe directly to repo"
+          git push origin main
